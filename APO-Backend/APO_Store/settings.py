@@ -39,6 +39,10 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
 
+    # Packages
+    "drf_yasg",
+
+    # Apps
     "Users",
 ]
 
