@@ -59,12 +59,12 @@ class Customer(AbstractBaseUser, PermissionsMixin):
 
 class CustomerAddress(models.Model):
     user_id = models.ForeignKey(Customer, on_delete=models.CASCADE)
-    country = models.CharField(max_length=100, null=True, blank=False)
+    country = models.CharField(max_length=100, null=False, blank=False)
     city = models.CharField(max_length=100, null=False, blank=False)
-    postal_code = models.CharField(max_length=100, null=True, blank=False)
-    address_line1 = models.CharField(max_length=100, null=True, blank=False)
-    address_line2 = models.CharField(max_length=100, null=True, blank=True)
-    telephone = models.CharField(max_length=100, null=True, blank=False)
+    postal_code = models.CharField(max_length=100, null=False, blank=False)
+    address_line1 = models.CharField(max_length=100, null=False, blank=False)
+    address_line2 = models.CharField(max_length=100, null=False, blank=True)
+    telephone = models.CharField(max_length=100, null=False, blank=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
