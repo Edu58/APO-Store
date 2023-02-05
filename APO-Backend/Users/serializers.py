@@ -1,6 +1,6 @@
 from rest_framework.serializers import ModelSerializer
 
-from .models import Customer
+from .models import Customer, CustomerAddress
 
 
 class CustomerSerializer(ModelSerializer):
@@ -11,3 +11,13 @@ class CustomerSerializer(ModelSerializer):
     class Meta:
         model = Customer
         fields = ("email", "password",)
+
+
+class CustomerAddressSerializer(ModelSerializer):
+    """
+    Converts the CustomerAddress model data to JSON which can be passed on and understood by other systems
+    """
+
+    class Meta:
+        model = CustomerAddress
+        fields = "__all__"

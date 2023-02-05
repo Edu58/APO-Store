@@ -1,5 +1,5 @@
 from django.contrib.auth.base_user import BaseUserManager
-from django.contrib.auth.models import AbstractBaseUser
+from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
@@ -20,7 +20,7 @@ class CustomerUserManager(BaseUserManager):
         user.save()
         return user
 
-    def create_superuser(self, email, password, telephone, **extra_fields):
+    def create_superuser(self, email, password, **extra_fields):
         """
         Creates a superuser who basically have all rights and permissions to do anything and access everything in the
         system
@@ -34,10 +34,10 @@ class CustomerUserManager(BaseUserManager):
         elif extra_fields.get("is_superuser") is not True:
             raise ValueError(_("Superuser must have is_superuser option as True"))
 
-        return self.create_user(email, password, telephone, **extra_fields)
+        return self.create_user(email, password, **extra_fields)
 
 
-class Customer(AbstractBaseUser):
+class Customer(AbstractBaseUser, PermissionsMixin):
     """
     This model is used to create a new customer. In this model, we also specify that the email is to be used as the
     email field, and we should use the CustomUserManager created above instead
@@ -55,3 +55,17 @@ class Customer(AbstractBaseUser):
 
     def __str__(self):
         return self.email
+
+
+class CustomerAddress(models.Model):
+    user_id = models.ForeignKey(Customer, on_delete=models.CASCADE)
+    country = models.CharField(max_length=100, null=True, blank=False)
+    city = models.CharField(max_length=100, null=False, blank=False)
+    postal_code = models.CharField(max_length=100, null=True, blank=False)
+    address_line1 = models.CharField(max_length=100, null=True, blank=False)
+    address_line2 = models.CharField(max_length=100, null=True, blank=True)
+    telephone = models.CharField(max_length=100, null=True, blank=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.address_line1

@@ -2,7 +2,7 @@ from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from .models import Customer
+from .models import Customer, CustomerAddress
 
 
 # Create your tests here.
@@ -13,6 +13,9 @@ class CustomerTests(APITestCase):
             "email": "testcustomer@gmail.com",
             "password": "testcustomerpass"
         }
+
+    def tearDown(self):
+        self.payload = None
 
     def test_create_customer(self):
         """
@@ -36,3 +39,58 @@ class CustomerTests(APITestCase):
         response = self.client.get(url, format="json")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Customer.objects.count(), 0)
+
+
+class CustomerAddressTest(APITestCase):
+    def setUp(self):
+        self.customer = Customer.objects.create_user(email="test@gmail.com", password="testPassword1123")
+
+    def tearDown(self):
+        self.customer.delete()
+
+    def test_customer_address_created(self):
+        """
+        Test if a customer address is created successfully on providing valid data
+        """
+        url = reverse('customer_address')
+        payload = {
+            "user_id": self.customer.pk,
+            "address_line1": "test place",
+            "city": "Test City",
+            "postal_code": "P.O Box 0111-2000",
+            "country": "Kenya",
+            "telephone": "254711111111"
+        }
+
+        response = self.client.post(url, payload, format="json")
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(CustomerAddress.objects.get().city, "Test City")
+        self.assertEqual(CustomerAddress.objects.get().postal_code, "P.O Box 0111-2000")
+        self.assertEqual(CustomerAddress.objects.get().country, "Kenya")
+        self.assertEqual(CustomerAddress.objects.get().telephone, "254711111111")
+
+    def test_create_customer_address_fails_on_invalid_data(self):
+        """
+        Test of create customer address fails on providing invalid data
+        """
+        url = reverse('customer_address')
+        payload = {
+            "user_id": self.customer.pk,
+            "address_line1": "test place",
+            "country": "Kenya",
+            "telephone": "254711111111"
+        }
+
+        response = self.client.post(url, payload, format="json")
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_get_customer_addresses(self):
+        """
+        Tests if a list of customer addresses is returned
+        """
+        url = reverse('customer_address')
+
+        response = self.client.get(url, format="json")
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(CustomerAddress.objects.count(), 0)
