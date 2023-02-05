@@ -11,6 +11,12 @@ class CustomerSerializer(ModelSerializer):
     class Meta:
         model = Customer
         fields = ("email", "password",)
+        # Prevents the password hash from being returned
+        extra_kwargs = {
+            "password": {
+                "write_only": True
+            }
+        }
 
 
 class CustomerAddressSerializer(ModelSerializer):

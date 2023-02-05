@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 
 from .forms import CustomerCreationForm, CustomerUpdateForm
-from .models import Customer
+from .models import Customer, CustomerAddress
 
 
 # Register your models here.
@@ -36,3 +36,4 @@ class CustomerAdmin(UserAdmin):
 
 
 admin.site.register(Customer, CustomerAdmin)
+admin.site.register(CustomerAddress)
