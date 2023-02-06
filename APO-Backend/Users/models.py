@@ -5,7 +5,7 @@ from django.utils.translation import gettext_lazy as _
 
 
 # Create your models here.
-class CustomerUserManager(BaseUserManager):
+class AccountManager(BaseUserManager):
     def create_user(self, email, password, **extra_fields):
         """
         Creates a new Customer. Emails and Phone Numbers are unique identifiers. Email and Password are used to log
@@ -37,12 +37,18 @@ class CustomerUserManager(BaseUserManager):
         return self.create_user(email, password, **extra_fields)
 
 
-class Customer(AbstractBaseUser, PermissionsMixin):
+class Account(AbstractBaseUser, PermissionsMixin):
     """
     This model is used to create a new customer. In this model, we also specify that the email is to be used as the
     email field, and we should use the CustomUserManager created above instead
     """
+
+    class UserRoles(models.TextChoices):
+        ADMIN = "Admin", "Admin",
+        CUSTOMER = "Customer", "Customer"
+
     email = models.EmailField(_("email address"), unique=True, null=False, blank=False)
+    role = models.CharField(max_length=8, choices=UserRoles.choices, default=UserRoles.CUSTOMER)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -51,14 +57,17 @@ class Customer(AbstractBaseUser, PermissionsMixin):
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = []
 
-    objects = CustomerUserManager()
+    objects = AccountManager()
 
     def __str__(self):
         return self.email
 
+    def roles(self):
+        return self.UserRoles.values
+
 
 class CustomerAddress(models.Model):
-    user_id = models.ForeignKey(Customer, on_delete=models.CASCADE)
+    account_id = models.ForeignKey(Account, on_delete=models.CASCADE)
     country = models.CharField(max_length=100, null=False, blank=False)
     city = models.CharField(max_length=100, null=False, blank=False)
     postal_code = models.CharField(max_length=100, null=False, blank=False)
@@ -82,7 +91,7 @@ class CustomerPayment(models.Model):
         PAYPAL = "PayPal", "PayPal"
         MPESA = "M-Pesa", "M-Pesa"
 
-    user_id = models.ForeignKey(Customer, on_delete=models.CASCADE)
+    account_id = models.ForeignKey(Account, on_delete=models.CASCADE)
     payment_type = models.CharField(max_length=15, choices=PaymentTypes.choices, default=PaymentTypes.MOBILE_PAYMENTS)
     provider = models.CharField(max_length=6, choices=PaymentProviders.choices, default=PaymentProviders.STRIPE)
     account_no = models.CharField(max_length=100, null=False, blank=True)

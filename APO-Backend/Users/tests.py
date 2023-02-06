@@ -2,59 +2,65 @@ from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from .models import Customer, CustomerAddress, CustomerPayment
+from .models import Account, CustomerAddress, CustomerPayment
 
 
 # Create your tests here.
-class CustomerTests(APITestCase):
+class AccountTests(APITestCase):
 
     def setUp(self):
         self.payload = {
-            "email": "testcustomer@gmail.com",
+            "email": "testAccount@gmail.com",
             "password": "testcustomerpass"
         }
 
     def tearDown(self):
         self.payload = None
 
-    def test_create_customer(self):
+    def test_create_account(self):
         """
-        Make sure that we can create a new customer and save to database
+        Make sure that we can create a new Account and save to database
         """
-        url = reverse('customers')
+        url = reverse('accounts')
 
         response = self.client.post(url, self.payload, format="json")
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertEqual(Customer.objects.count(), 1)
-        self.assertEqual(Customer.objects.get().email, "testcustomer@gmail.com")
-        self.assertEqual(Customer.objects.get().is_active, True)
-        self.assertEqual(Customer.objects.get().is_staff, False)
+        self.assertEqual(Account.objects.count(), 1)
+        self.assertEqual(Account.objects.get().email, "testAccount@gmail.com")
+        self.assertEqual(Account.objects.get().role, "Customer")
+        self.assertEqual(Account.objects.get().is_active, True)
+        self.assertEqual(Account.objects.get().is_staff, False)
 
-    def test_get_customers(self):
+        # Test if user is added in Customer Group
+        user = Account.objects.get()
+        in_customer_group = user.groups.filter(name="Customers").exists()
+        self.assertEqual(in_customer_group, True)
+
+    def test_get_accounts(self):
         """
-        Make sure that we can create a new customer and save to database
+        Make sure that we can create a new Account and save to database
         """
-        url = reverse('customers')
+        url = reverse('accounts')
 
         response = self.client.get(url, format="json")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(Customer.objects.count(), 0)
+        self.assertEqual(Account.objects.count(), 0)
 
 
 class CustomerAddressTest(APITestCase):
     def setUp(self):
-        self.customer = Customer.objects.create_user(email="test@gmail.com", password="testPassword1123")
+        self.account = Account.objects.create_user(email="test@gmail.com", password="testPassword1123")
 
     def tearDown(self):
-        self.customer.delete()
+        self.account.delete()
 
     def test_customer_address_created(self):
         """
         Test if a customer address is created successfully on providing valid data
         """
-        url = reverse('customer_address')
+        url = reverse('accounts_address')
         payload = {
-            "user_id": self.customer.pk,
+            "account_id": self.account.pk,
             "address_line1": "test place",
             "city": "Test City",
             "postal_code": "P.O Box 0111-2000",
@@ -73,9 +79,9 @@ class CustomerAddressTest(APITestCase):
         """
         Test of create customer address fails on providing invalid data
         """
-        url = reverse('customer_address')
+        url = reverse('accounts_address')
         payload = {
-            "user_id": self.customer.pk,
+            "account_id": self.account.pk,
             "address_line1": "test place",
             "country": "Kenya",
             "telephone": "254711111111"
@@ -88,7 +94,7 @@ class CustomerAddressTest(APITestCase):
         """
         Tests if a list of customer addresses is returned
         """
-        url = reverse('customer_address')
+        url = reverse('accounts_address')
 
         response = self.client.get(url, format="json")
 
@@ -102,18 +108,18 @@ class CustomerPaymentTest(APITestCase):
     """
 
     def setUp(self) -> None:
-        self.customer = Customer.objects.create_user(
+        self.account = Account.objects.create_user(
             email="test@gmail.com",
             password="verytastypassword"
         )
 
     def tearDown(self) -> None:
-        self.customer.delete()
+        self.account.delete()
 
     def test_customer_payment_created(self):
-        url = reverse("customer_payment")
+        url = reverse("accounts_payment")
         payload = {
-            "user_id": self.customer.pk,
+            "account_id": self.account.pk,
             "payment_type": "Mobile Payment",
             "provider": "M-Pesa",
             "account_no": "254711111134",
@@ -128,9 +134,9 @@ class CustomerPaymentTest(APITestCase):
         self.assertEqual(CustomerPayment.objects.get().expiry, '')
 
     def test_customer_payment_creation_fails_on_invalid_data(self):
-        url = reverse("customer_payment")
+        url = reverse("accounts_payment")
         payload = {
-            "user_id": self.customer.pk,
+            "account_id": self.account.pk,
             "payment_type": "Mobile-Pa",
             "provider": "M-Pesa",
             "account_no": "254711111134",
