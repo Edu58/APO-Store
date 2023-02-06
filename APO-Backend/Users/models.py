@@ -69,3 +69,25 @@ class CustomerAddress(models.Model):
 
     def __str__(self):
         return self.address_line1
+
+
+class CustomerPayment(models.Model):
+    class PaymentTypes(models.TextChoices):
+        CASH = "Cash", "Cash"
+        MOBILE_PAYMENTS = "Mobile Payment", "Mobile Payment"
+        CREDIT_CARD = "Credit Card", "Credit Card"
+
+    class PaymentProviders(models.TextChoices):
+        STRIPE = "Stripe", "Stripe"
+        PAYPAL = "PayPal", "PayPal"
+        MPESA = "M-Pesa", "M-Pesa"
+
+    user_id = models.ForeignKey(Customer, on_delete=models.CASCADE)
+    payment_type = models.CharField(max_length=15, choices=PaymentTypes.choices, default=PaymentTypes.MOBILE_PAYMENTS)
+    provider = models.CharField(max_length=6, choices=PaymentProviders.choices, default=PaymentProviders.STRIPE)
+    account_no = models.CharField(max_length=100, null=False, blank=True)
+    expiry = models.CharField(max_length=100, null=False, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.payment_type

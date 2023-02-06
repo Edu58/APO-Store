@@ -2,7 +2,7 @@ from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from .models import Customer, CustomerAddress
+from .models import Customer, CustomerAddress, CustomerPayment
 
 
 # Create your tests here.
@@ -94,3 +94,49 @@ class CustomerAddressTest(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(CustomerAddress.objects.count(), 0)
+
+
+class CustomerPaymentTest(APITestCase):
+    """
+    Tests if the Customer Payment is created and returned successfully
+    """
+
+    def setUp(self) -> None:
+        self.customer = Customer.objects.create_user(
+            email="test@gmail.com",
+            password="verytastypassword"
+        )
+
+    def tearDown(self) -> None:
+        self.customer.delete()
+
+    def test_customer_payment_created(self):
+        url = reverse("customer_payment")
+        payload = {
+            "user_id": self.customer.pk,
+            "payment_type": "Mobile Payment",
+            "provider": "M-Pesa",
+            "account_no": "254711111134",
+            "expiry": ""
+        }
+
+        response = self.client.post(url, payload, format="json")
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(CustomerPayment.objects.count(), 1)
+        self.assertEqual(CustomerPayment.objects.get().payment_type, "Mobile Payment")
+        self.assertEqual(CustomerPayment.objects.get().provider, "M-Pesa")
+        self.assertEqual(CustomerPayment.objects.get().expiry, '')
+
+    def test_customer_payment_creation_fails_on_invalid_data(self):
+        url = reverse("customer_payment")
+        payload = {
+            "user_id": self.customer.pk,
+            "payment_type": "Mobile-Pa",
+            "provider": "M-Pesa",
+            "account_no": "254711111134",
+            "expiry": ""
+        }
+
+        response = self.client.post(url, payload, format="json")
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(CustomerPayment.objects.count(), 0)

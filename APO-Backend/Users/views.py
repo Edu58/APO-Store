@@ -1,8 +1,8 @@
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework.views import APIView, status, Response
 
-from .models import Customer, CustomerAddress
-from .serializers import CustomerSerializer, CustomerAddressSerializer
+from .models import Customer, CustomerAddress, CustomerPayment
+from .serializers import CustomerSerializer, CustomerAddressSerializer, CustomerPaymentSerializer
 
 
 # Create your views here.
@@ -80,5 +80,42 @@ class CustomerAddressView(APIView):
 
         return Response(
             data=customer_serializer.errors,
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+
+class CustomerPaymentView(APIView):
+    """
+    1. Creates a Customer Payment
+    2. Get a list of the first 10 Customer Payments objects
+    """
+
+    @swagger_auto_schema(
+        operation_description="Returns a list of the first 10 Customer Payments"
+    )
+    def get(self, format=None, *args, **kwargs):
+        customer_payments = CustomerPayment.objects.all()[:10]
+        customer_payments_serializer = CustomerPaymentSerializer(customer_payments, many=True)
+        return Response(
+            data=customer_payments_serializer.data,
+            status=status.HTTP_200_OK
+        )
+
+    @swagger_auto_schema(
+        request_body=CustomerPaymentSerializer,
+        operation_description="Created a Customer Payment and saves to DB"
+    )
+    def post(self, request, format=None, *args, **kwargs):
+        customer_payment_serializer = CustomerPaymentSerializer(data=request.data)
+
+        if customer_payment_serializer.is_valid():
+            customer_payment_serializer.save()
+            return Response(
+                data=customer_payment_serializer.data,
+                status=status.HTTP_201_CREATED
+            )
+
+        return Response(
+            data=customer_payment_serializer.errors,
             status=status.HTTP_400_BAD_REQUEST
         )
