@@ -186,14 +186,9 @@ class PaymentDetailsTest(APITestCase):
             account=self.account,
             total="100"
         )
-        self.order.products.create(
-            name="test product",
-            description="test description",
-            category=self.category,
-            SKU="0183e78234tqwgduv837t12823",
-            price="1234.00",
-            discount=self.discount
-        )
+        products = Product.objects.filter(name="test product")
+        # Fixes Direct Assignment to a reverse side of a many-to-many set is prohibited ERROR
+        self.order.products.set(products)
 
     def tearDown(self) -> None:
         self.account.delete()
