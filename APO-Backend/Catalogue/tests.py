@@ -2,7 +2,7 @@ from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from .models import ProductCategory, Discount
+from .models import ProductCategory, Discount, Product
 
 
 # Create your tests here.
@@ -37,7 +37,7 @@ class ProductCategoryTest(APITestCase):
 
 class DiscountTest(APITestCase):
     """
-    1. Test if a Dicount object is created and saved successfully
+    1. Test if a Discount object is created and saved successfully
     2. Test if a Discount queryset is returned successfully on request
     """
 
@@ -76,4 +76,62 @@ class DiscountTest(APITestCase):
         response = self.client.get(self.url, format="json")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Discount.objects.count(), 0)
-        
+
+
+class ProductTest(APITestCase):
+    """
+    1. Test if a Product object is created and saved successfully
+    2. Test if a Product queryset is returned successfully on request
+    """
+
+    def setUp(self) -> None:
+        self.url = reverse('products')
+        self.category = ProductCategory.objects.create(name="test category 0001")
+        self.discount = Discount.objects.create(
+            name="test discount",
+            discount_percent="20",
+            active=True
+        )
+
+    def tearDown(self) -> None:
+        self.discount.delete()
+        self.category.delete()
+        Product.objects.all().delete()
+
+    def test_product_created_successfully(self):
+        payload = {
+            "name": "test product",
+            "description": "test description",
+            "category": self.category.pk,
+            "SKU": "0183e78tqwgduv837t12823",
+            "price": "1234.00",
+            "discount": self.discount.pk
+        }
+
+        response = self.client.post(self.url, payload, format="json")
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(Product.objects.count(), 1)
+        self.assertEqual(Product.objects.get().name, "test product")
+        self.assertEqual(Product.objects.get().category, self.category)
+        self.assertEqual(Product.objects.get().SKU, "0183e78tqwgduv837t12823")
+        self.assertEqual(Product.objects.get().price, "1234.00")
+        self.assertEqual(Product.objects.get().discount, self.discount)
+
+    def test_product_not_created_on_invalid_data(self):
+        # Payload object missing a required category field
+        payload = {
+            "name": "test product",
+            "description": "test description",
+            "SKU": "0183e78tqwgduv837t12823",
+            "price": "1234.00",
+            "discount": self.discount.pk
+        }
+
+        response = self.client.post(self.url, payload, format="json")
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(Product.objects.count(), 0)
+
+    def test_products_queryset_returns_data(self):
+        response = self.client.get(self.url, format="json")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(Product.objects.count(), 0)

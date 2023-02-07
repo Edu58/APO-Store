@@ -3,8 +3,8 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from .models import ProductCategory, Discount
-from .serializers import ProductCategorySerializer, DiscountSerializer
+from .models import ProductCategory, Discount, Product
+from .serializers import ProductCategorySerializer, DiscountSerializer, ProductSerializer
 
 
 # Create your views here.
@@ -78,5 +78,42 @@ class DiscountView(APIView):
 
         return Response(
             data=discounts_serializer.errors,
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+
+class ProductView(APIView):
+    """
+    1. Creates a Product
+    2. Returns a list of 10 latest Products
+    """
+
+    @swagger_auto_schema(
+        operation_description="Returns a list of the latest 10 products"
+    )
+    def get(self, format=None, *args, **kwargs):
+        products = Product.objects.all()[:10]
+        products_serializer = ProductSerializer(products, many=True)
+        return Response(
+            data=products_serializer.data,
+            status=status.HTTP_200_OK
+        )
+
+    @swagger_auto_schema(
+        request_body=ProductSerializer,
+        operation_description="Creates a new Product"
+    )
+    def post(self, request, format=None, *args, **kwargs):
+        products_serializer = ProductSerializer(data=request.data)
+
+        if products_serializer.is_valid():
+            products_serializer.save()
+            return Response(
+                data=products_serializer.data,
+                status=status.HTTP_201_CREATED
+            )
+
+        return Response(
+            data=products_serializer.errors,
             status=status.HTTP_400_BAD_REQUEST
         )

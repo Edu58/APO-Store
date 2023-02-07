@@ -27,7 +27,7 @@ class Discount(models.Model):
 class Product(models.Model):
     name = models.CharField(max_length=250, null=False, blank=False)
     category = models.ForeignKey(ProductCategory, on_delete=models.CASCADE)
-    desc = models.TextField(null=False, blank=True)
+    description = models.TextField(null=False, blank=True)
     color = models.CharField(max_length=250, null=False, blank=True)
     size = models.CharField(max_length=5, null=False, blank=True)
     SKU = models.CharField(max_length=250, null=False, blank=False, unique=True, db_index=True)
