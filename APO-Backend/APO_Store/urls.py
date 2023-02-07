@@ -44,5 +44,6 @@ urlpatterns = [
     # Apps urls
     path("auth/", include("Users.urls")),
     path("catalogue/", include("Catalogue.urls")),
-    path("orders/", include("Orders.urls"))
+    path("orders/", include("Orders.urls")),
+    path("checkout/", include("Checkout.urls"))
 ]
