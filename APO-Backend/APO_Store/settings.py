@@ -43,7 +43,8 @@ INSTALLED_APPS = [
 
     # Apps
     "Users",
-    "Catalogue"
+    "Catalogue",
+    "Orders"
 ]
 
 MIDDLEWARE = [
