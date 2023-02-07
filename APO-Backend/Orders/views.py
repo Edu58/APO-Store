@@ -3,14 +3,14 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from .models import ShoppingSession
-from .serializers import ShoppingSessionSerializer
+from .models import ShoppingSession, Cart, Order
+from .serializers import ShoppingSessionSerializer, CartSerializer, OrderSerializer
 
 
 # Create your views here.
 class ShoppingSessionView(APIView):
     """
-    1. Creates a Shpping Session
+    1. Creates a Shopping Session
     2. Returns a list of 10 latest Shopping Sessions
     """
 
@@ -41,5 +41,79 @@ class ShoppingSessionView(APIView):
 
         return Response(
             data=shopping_session_serializer.errors,
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+
+class CartView(APIView):
+    """
+    1. Creates a Cart
+    2. Returns a list of 10 latest Carts
+    """
+
+    @swagger_auto_schema(
+        operation_description="Returns a list of the latest 10 Carts"
+    )
+    def get(self, format=None, *args, **kwargs):
+        cart = Cart.objects.all()[:10]
+        cart_serializer = ShoppingSessionSerializer(cart, many=True)
+        return Response(
+            data=cart_serializer.data,
+            status=status.HTTP_200_OK
+        )
+
+    @swagger_auto_schema(
+        request_body=CartSerializer,
+        operation_description="Creates a new Cart"
+    )
+    def post(self, request, format=None, *args, **kwargs):
+        cart_serializer = CartSerializer(data=request.data)
+
+        if cart_serializer.is_valid():
+            cart_serializer.save()
+            return Response(
+                data=cart_serializer.data,
+                status=status.HTTP_201_CREATED
+            )
+
+        return Response(
+            data=cart_serializer.errors,
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+
+class OrderView(APIView):
+    """
+    1. Creates an Order
+    2. Returns a list of 10 latest Order
+    """
+
+    @swagger_auto_schema(
+        operation_description="Returns a list of the latest 10 Orders"
+    )
+    def get(self, format=None, *args, **kwargs):
+        order = Order.objects.all()[:10]
+        order_serializer = ShoppingSessionSerializer(order, many=True)
+        return Response(
+            data=order_serializer.data,
+            status=status.HTTP_200_OK
+        )
+
+    @swagger_auto_schema(
+        request_body=OrderSerializer,
+        operation_description="Creates a new Order"
+    )
+    def post(self, request, format=None, *args, **kwargs):
+        order_serializer = OrderSerializer(data=request.data)
+
+        if order_serializer.is_valid():
+            order_serializer.save()
+            return Response(
+                data=order_serializer.data,
+                status=status.HTTP_201_CREATED
+            )
+
+        return Response(
+            data=order_serializer.errors,
             status=status.HTTP_400_BAD_REQUEST
         )
