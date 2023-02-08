@@ -45,5 +45,6 @@ urlpatterns = [
     path("auth/", include("Users.urls")),
     path("catalogue/", include("Catalogue.urls")),
     path("orders/", include("Orders.urls")),
-    path("checkout/", include("Checkout.urls"))
+    path("checkout/", include("Checkout.urls")),
+    path("query/", include("Query.urls"))
 ]

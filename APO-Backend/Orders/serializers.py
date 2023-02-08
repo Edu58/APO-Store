@@ -1,6 +1,6 @@
 from rest_framework.serializers import ModelSerializer
 
-from .models import ShoppingSession, Cart, Order, PaymentDetails
+from .models import ShoppingSession, Cart, Order
 
 
 class ShoppingSessionSerializer(ModelSerializer):
@@ -18,10 +18,4 @@ class CartSerializer(ModelSerializer):
 class OrderSerializer(ModelSerializer):
     class Meta:
         model = Order
-        fields = "__all__"
-
-
-class PaymentDetailsSerializer(ModelSerializer):
-    class Meta:
-        model = PaymentDetails
         fields = "__all__"

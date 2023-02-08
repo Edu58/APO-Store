@@ -45,7 +45,8 @@ INSTALLED_APPS = [
     "Users",
     "Catalogue",
     "Orders",
-    "Checkout"
+    "Checkout",
+    "Query"
 ]
 
 MIDDLEWARE = [
