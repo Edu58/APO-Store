@@ -3,7 +3,7 @@ name: APO-Backend Tests
 on:
   push:
     branches:
-      -main
+      - main
       
 jobs:
   build:
