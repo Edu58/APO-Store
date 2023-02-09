@@ -29,6 +29,7 @@ class Cart(models.Model):
 class Order(models.Model):
     account = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
     products = models.ManyToManyField(Product)
+    address = models.CharField(max_length=250, null=False, blank=False)
     total = models.CharField(max_length=100, default=0)
     updated_at = models.DateTimeField(auto_now=True)
     created_at = models.DateTimeField(auto_now_add=True)
