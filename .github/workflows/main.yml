@@ -24,4 +24,5 @@ jobs:
         
     - name: Django Testing
       run: |
+        cd APO-Backend
         python3 manage.py test
