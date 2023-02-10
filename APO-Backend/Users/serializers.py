@@ -1,7 +1,29 @@
 from django.contrib.auth.models import Group
 from rest_framework.serializers import ModelSerializer
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from rest_framework_simplejwt.views import TokenObtainPairView
 
 from .models import Account, CustomerAddress, CustomerPayment, Profile
+
+
+class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
+    """
+    Customizes token claims by added extra fields
+    """
+
+    @classmethod
+    def get_token(cls, user):
+        token = super().get_token(user)
+
+        # custom claims
+        token['email'] = user.email
+        token['role'] = user.role
+
+        return token
+
+
+class MyTokenObtainPairView(TokenObtainPairView):
+    serializer_class = MyTokenObtainPairSerializer
 
 
 class AccountSerializer(ModelSerializer):
