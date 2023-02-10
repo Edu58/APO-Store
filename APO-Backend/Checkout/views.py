@@ -1,5 +1,7 @@
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status
+from rest_framework.generics import RetrieveUpdateDestroyAPIView
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -43,3 +45,9 @@ class PaymentDetailsView(APIView):
             data=payment_details_serializer.errors,
             status=status.HTTP_400_BAD_REQUEST
         )
+
+
+class PaymentDetailsDetailView(RetrieveUpdateDestroyAPIView):
+    permission_classes = [IsAuthenticated]
+    queryset = PaymentDetails.objects.all()
+    serializer_class = PaymentDetailsSerializer
