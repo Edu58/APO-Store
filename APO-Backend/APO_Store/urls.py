@@ -20,6 +20,10 @@ from django.urls import path, re_path, include
 from drf_yasg import openapi
 from drf_yasg.views import get_schema_view
 from rest_framework import permissions
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView,
+    TokenRefreshView,
+)
 
 schema_view = get_schema_view(
     openapi.Info(
@@ -31,12 +35,16 @@ schema_view = get_schema_view(
         contact=openapi.Contact(email="edumuriithi58@gmail.com"),
         license=openapi.License(name="BSD License"),
     ),
-    public=False,
+    public=True,
     permission_classes=[permissions.AllowAny],
 )
 
 urlpatterns = [
                   path('admin/', admin.site.urls),
+
+                  # JWT Authentication
+                  path('api/v1/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+                  path('api/v1/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
 
                   # drf-yasg documentation paths
                   re_path(r'^api/v1/(?P<format>\.json|\.yaml)$', schema_view.without_ui(cache_timeout=0),
@@ -46,7 +54,7 @@ urlpatterns = [
                   re_path(r'^api/v1/docs/redoc/$', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
 
                   # Apps urls
-                  path("auth/", include("Users.urls")),
+                  path("accounts/", include("Users.urls")),
                   path("catalogue/", include("Catalogue.urls")),
                   path("orders/", include("Orders.urls")),
                   path("checkout/", include("Checkout.urls")),
