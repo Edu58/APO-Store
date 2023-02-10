@@ -137,6 +137,7 @@ class OrderTest(APITestCase):
         payload = {
             "account": self.account.pk,
             "products": [self.product.pk],
+            "address": "tests home",
             "total": "100",
         }
 
