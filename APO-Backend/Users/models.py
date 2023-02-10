@@ -66,6 +66,16 @@ class Account(AbstractBaseUser, PermissionsMixin):
         return self.UserRoles.values
 
 
+class Profile(models.Model):
+    account = models.OneToOneField(Account, on_delete=models.CASCADE)
+    first_name = models.CharField(max_length=50, null=False, blank=False)
+    middle_name = models.CharField(max_length=50, null=True, blank=True)
+    last_name = models.CharField(max_length=50, null=False, blank=False)
+
+    def __str__(self):
+        return self.account.email
+
+
 class CustomerAddress(models.Model):
     account_id = models.ForeignKey(Account, on_delete=models.CASCADE)
     country = models.CharField(max_length=100, null=False, blank=False)
