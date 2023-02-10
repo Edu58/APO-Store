@@ -1,4 +1,6 @@
 from drf_yasg.utils import swagger_auto_schema
+from rest_framework.generics import RetrieveUpdateDestroyAPIView
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView, status, Response
 
 from .models import Account, CustomerAddress, CustomerPayment
@@ -46,6 +48,12 @@ class AccountRegistrationView(APIView):
             )
 
 
+class AccountDetailView(RetrieveUpdateDestroyAPIView):
+    permission_classes = [IsAuthenticated]
+    queryset = Account.objects.all()
+    serializer_class = AccountSerializer
+
+
 class CustomerAddressView(APIView):
     """
     1. Creates a Customer Address
@@ -84,6 +92,12 @@ class CustomerAddressView(APIView):
         )
 
 
+class CustomerAddressDetailView(RetrieveUpdateDestroyAPIView):
+    permission_classes = [IsAuthenticated]
+    queryset = CustomerAddress.objects.all()
+    serializer_class = CustomerAddressSerializer
+
+
 class CustomerPaymentView(APIView):
     """
     1. Creates a Customer Payment
@@ -119,3 +133,9 @@ class CustomerPaymentView(APIView):
             data=customer_payment_serializer.errors,
             status=status.HTTP_400_BAD_REQUEST
         )
+
+
+class CustomerPaymentDetailView(RetrieveUpdateDestroyAPIView):
+    permission_classes = [IsAuthenticated]
+    queryset = CustomerPayment.objects.all()
+    serializer_class = CustomerPaymentSerializer
