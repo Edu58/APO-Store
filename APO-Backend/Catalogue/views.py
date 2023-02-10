@@ -1,5 +1,7 @@
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status
+from rest_framework.generics import RetrieveUpdateDestroyAPIView
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -45,6 +47,12 @@ class ProductCategoryView(APIView):
         )
 
 
+class ProductCategoryDetailView(RetrieveUpdateDestroyAPIView):
+    permission_classes = [IsAuthenticated]
+    queryset = ProductCategory.objects.all()
+    serializer_class = ProductCategorySerializer
+
+
 class DiscountView(APIView):
     """
     1. Creates a Discount
@@ -82,6 +90,12 @@ class DiscountView(APIView):
         )
 
 
+class DiscountDetailView(RetrieveUpdateDestroyAPIView):
+    permission_classes = [IsAuthenticated]
+    queryset = Discount.objects.all()
+    serializer_class = DiscountSerializer
+
+
 class ProductView(APIView):
     """
     1. Creates a Product
@@ -117,3 +131,10 @@ class ProductView(APIView):
             data=products_serializer.errors,
             status=status.HTTP_400_BAD_REQUEST
         )
+
+
+class ProductDetailView(RetrieveUpdateDestroyAPIView):
+    permission_classes = [IsAuthenticated]
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
+    

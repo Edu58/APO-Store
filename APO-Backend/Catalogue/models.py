@@ -25,8 +25,9 @@ class Discount(models.Model):
 
 
 class Product(models.Model):
-    name = models.CharField(max_length=250, null=False, blank=False)
+    name = models.CharField(max_length=250, null=False, blank=False, db_index=True)
     category = models.ForeignKey(ProductCategory, on_delete=models.CASCADE)
+    image = models.ImageField(default="default.png", upload_to="photos/products/")
     description = models.TextField(null=False, blank=True)
     color = models.CharField(max_length=250, null=False, blank=True)
     size = models.CharField(max_length=5, null=False, blank=True)
