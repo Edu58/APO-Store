@@ -1,9 +1,17 @@
 name: APO-Backend Tests
+env:
+  SECRET_KEY: 'django-insecure-!drlp9)c*blaz--aul7k^bn9ryxjl$7sjm+sr@=dt-k(3cnd$1'
+  DEBUG: False
+  DB_TYPE: 'postgresql'
+  DB_NAME: 'testingdb'
+  DB_USER: 'testinguser'
+  DB_PASSWORD: 'testingpassword'
+  ALLOWED_HOSTS: '*'
 
 on:
   push:
     branches:
-      -main
+      - main
       
 jobs:
   build:
@@ -21,12 +29,8 @@ jobs:
         cd APO-Backend 
         python -m pip install --upgrade pip
         pip install -r requirements.txt
-      
-    - name: Coverage report
-      run: |
-        pip install coverage
-        coverage run manage.py Tests
-        coverage report
         
     - name: Django Testing
-      run: python3 manage.py test
+      run: |
+        cd APO-Backend
+        python3 manage.py test
