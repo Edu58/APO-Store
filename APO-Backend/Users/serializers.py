@@ -1,7 +1,7 @@
 from django.contrib.auth.models import Group
 from rest_framework.serializers import ModelSerializer
 
-from .models import Account, CustomerAddress, CustomerPayment
+from .models import Account, CustomerAddress, CustomerPayment, Profile
 
 
 class AccountSerializer(ModelSerializer):
@@ -54,4 +54,14 @@ class CustomerPaymentSerializer(ModelSerializer):
 
     class Meta:
         model = CustomerPayment
+        fields = "__all__"
+
+
+class ProfileSerializer(ModelSerializer):
+    """
+    Converts the Profile model data to JSON which can be passed on and understood by other systems
+    """
+
+    class Meta:
+        model = Profile
         fields = "__all__"

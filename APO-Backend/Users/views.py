@@ -3,8 +3,8 @@ from rest_framework.generics import RetrieveUpdateDestroyAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView, status, Response
 
-from .models import Account, CustomerAddress, CustomerPayment
-from .serializers import AccountSerializer, CustomerAddressSerializer, CustomerPaymentSerializer
+from .models import Account, CustomerAddress, CustomerPayment, Profile
+from .serializers import AccountSerializer, CustomerAddressSerializer, CustomerPaymentSerializer, ProfileSerializer
 
 
 # Create your views here.
@@ -139,3 +139,9 @@ class CustomerPaymentDetailView(RetrieveUpdateDestroyAPIView):
     permission_classes = [IsAuthenticated]
     queryset = CustomerPayment.objects.all()
     serializer_class = CustomerPaymentSerializer
+
+
+class ProfileDetailView(RetrieveUpdateDestroyAPIView):
+    permission_classes = [IsAuthenticated]
+    queryset = Profile.objects.all()
+    serializer_class = ProfileSerializer
