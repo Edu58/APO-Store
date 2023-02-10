@@ -1,5 +1,7 @@
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status
+from rest_framework.generics import RetrieveUpdateDestroyAPIView
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -45,6 +47,12 @@ class ShoppingSessionView(APIView):
         )
 
 
+class ShoppingSessionDetailView(RetrieveUpdateDestroyAPIView):
+    permission_classes = [IsAuthenticated]
+    queryset = ShoppingSession.objects.all()
+    serializer_class = ShoppingSessionSerializer
+
+
 class CartView(APIView):
     """
     1. Creates a Cart
@@ -82,6 +90,12 @@ class CartView(APIView):
         )
 
 
+class CartDetailView(RetrieveUpdateDestroyAPIView):
+    permission_classes = [IsAuthenticated]
+    queryset = Cart.objects.all()
+    serializer_class = CartSerializer
+
+
 class OrderView(APIView):
     """
     1. Creates an Order
@@ -117,3 +131,9 @@ class OrderView(APIView):
             data=order_serializer.errors,
             status=status.HTTP_400_BAD_REQUEST
         )
+
+
+class OrderDetailView(RetrieveUpdateDestroyAPIView):
+    permission_classes = [IsAuthenticated]
+    queryset = Order.objects.all()
+    serializer_class = OrderSerializer

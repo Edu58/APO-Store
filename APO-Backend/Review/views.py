@@ -1,5 +1,7 @@
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status
+from rest_framework.generics import RetrieveUpdateDestroyAPIView
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -42,3 +44,9 @@ class ProductsReviewView(APIView):
             data=product_reviews_serializer.errors,
             status=status.HTTP_400_BAD_REQUEST
         )
+
+
+class ProductReviewDetailView(RetrieveUpdateDestroyAPIView):
+    permission_classes = [IsAuthenticated]
+    queryset = ProductReview.objects.all()
+    serializer_class = ProductReviewSerializer

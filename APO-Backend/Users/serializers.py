@@ -22,14 +22,17 @@ class AccountSerializer(ModelSerializer):
     def create(self, validated_data):
         role = validated_data.get('role')
         account = Account.objects.create(**validated_data)
+        account.set_password(validated_data.get('password'))
 
         admins_group, created = Group.objects.get_or_create(name="Admins")
         customers_group, created = Group.objects.get_or_create(name="Customers")
 
         if role is "Admin":
             account.groups.add(admins_group)
+            account.save()
         else:
             account.groups.add(customers_group)
+            account.save()
 
         return account
 

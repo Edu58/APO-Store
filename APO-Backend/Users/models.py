@@ -44,8 +44,8 @@ class Account(AbstractBaseUser, PermissionsMixin):
     """
 
     class UserRoles(models.TextChoices):
-        ADMIN = "Admin", "Admin",
         CUSTOMER = "Customer", "Customer"
+        ADMIN = "Admin", "Admin",
 
     email = models.EmailField(_("email address"), unique=True, null=False, blank=False)
     role = models.CharField(max_length=8, choices=UserRoles.choices, default=UserRoles.CUSTOMER)
