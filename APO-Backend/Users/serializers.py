@@ -33,9 +33,12 @@ class AccountSerializer(ModelSerializer):
 
     class Meta:
         model = Account
-        fields = ("email", "password", "role")
+        fields = ("id", "email", "password", "role")
         # Prevents the password hash from being returned
         extra_kwargs = {
+            "id": {
+                "read_only": True
+            },
             "password": {
                 "write_only": True
             }

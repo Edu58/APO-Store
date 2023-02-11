@@ -2,13 +2,16 @@ from django.views.decorators.vary import vary_on_headers
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.generics import RetrieveUpdateDestroyAPIView
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.views import APIView, status, Response
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
 
 from .models import Account, CustomerAddress, CustomerPayment, Profile
 from .serializers import AccountSerializer, CustomerAddressSerializer, CustomerPaymentSerializer, ProfileSerializer
+
+# Celery tasks
+from .tasks import send_welcome_email
 
 
 # Create your views here.
@@ -18,7 +21,7 @@ class AccountRegistrationView(APIView, PageNumberPagination):
     2. Get the first 10 Accounts
     """
 
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
 
     @swagger_auto_schema(
         responses={
@@ -47,6 +50,9 @@ class AccountRegistrationView(APIView, PageNumberPagination):
 
         if account_serializer.is_valid():
             account_serializer.save()
+
+            # Send welcome email on successful registration
+            send_welcome_email.delay(account_serializer.data.get("email"))
             return Response(
                 data=account_serializer.data,
                 status=status.HTTP_201_CREATED

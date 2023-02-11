@@ -71,7 +71,7 @@ ROOT_URLCONF = "APO_Store.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": [os.path.join(BASE_DIR, 'templates')],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -140,13 +140,30 @@ CACHES = {
     }
 }
 
+# Cache config
 CACHE_MIDDLEWARE_ALIAS = 'default'
 CACHE_MIDDLEWARE_SECONDS = '600'
 CACHE_MIDDLEWARE_KEY_PREFIX = ''
 
+# Cache config
 SESSION_ENGINE = "django.contrib.sessions.backends.cache"
 SESSION_CACHE_ALIAS = "default"
 
+# Celery config
+CELERY_BROKER_URL = 'amqp://localhost'
+CELERY_TIMEZONE = "Africa/Nairobi"
+CELERY_TASK_TRACK_STARTED = True
+CELERY_TASK_TIME_LIMIT = 30 * 60
+
+# Email config
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_HOST = "smtp.gmail.com"
+EMAIL_HOST_USER = "support@apostore.com"
+EMAIL_HOST_PASSWORD = 213123
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+
+# django-simplejwt config
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
