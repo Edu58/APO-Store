@@ -86,6 +86,9 @@ class CustomerAddress(models.Model):
     telephone = models.CharField(max_length=100, null=False, blank=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
+    class Meta:
+        ordering = ('-created_at',)
+
     def __str__(self):
         return self.address_line1
 
@@ -107,6 +110,9 @@ class CustomerPayment(models.Model):
     account_no = models.CharField(max_length=100, null=False, blank=True)
     expiry = models.CharField(max_length=100, null=False, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ('-created_at',)
 
     def __str__(self):
         return self.payment_type
