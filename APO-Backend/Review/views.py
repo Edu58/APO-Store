@@ -1,6 +1,6 @@
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
-from django.views.decorators.vary import vary_on_headers
+from django.views.decorators.vary import vary_on_cookie
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status
 from rest_framework.pagination import PageNumberPagination
@@ -22,7 +22,7 @@ class ProductsReviewView(APIView, PageNumberPagination):
     @swagger_auto_schema(
         operation_description="Returns a list of the latest 10 Product Reviews"
     )
-    @method_decorator(vary_on_headers("Authorization"))
+    @method_decorator(vary_on_cookie)
     @method_decorator(cache_page(60 * 60))
     def get(self, request, format=None, *args, **kwargs):
         product_reviews = ProductReview.objects.all()
