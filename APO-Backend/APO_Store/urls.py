@@ -40,6 +40,9 @@ schema_view = get_schema_view(
 urlpatterns = [
                   path('admin/', admin.site.urls),
 
+                  # DEBUG toolbar
+                  path('__debug__/', include('debug_toolbar.urls')),
+
                   # JWT Authentication
                   path('api/v1/token/', MyTokenObtainPairView.as_view(), name='token_obtain_pair'),
                   path('api/v1/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
@@ -52,10 +55,10 @@ urlpatterns = [
                   re_path(r'^api/v1/docs/redoc/$', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
 
                   # Apps urls
-                  path("accounts/", include("Users.urls")),
-                  path("catalogue/", include("Catalogue.urls")),
-                  path("orders/", include("Orders.urls")),
-                  path("checkout/", include("Checkout.urls")),
-                  path("query/", include("Query.urls")),
-                  path("review/", include("Review.urls"))
+                  path("api/v1/accounts/", include("Users.urls")),
+                  path("api/v1/catalogue/", include("Catalogue.urls")),
+                  path("api/v1/orders/", include("Orders.urls")),
+                  path("api/v1/checkout/", include("Checkout.urls")),
+                  path("api/v1/query/", include("Query.urls")),
+                  path("api/v1/review/", include("Review.urls"))
               ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

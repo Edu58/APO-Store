@@ -1,9 +1,12 @@
+from django.views.decorators.vary import vary_on_headers
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status
 from rest_framework.generics import RetrieveUpdateDestroyAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_page
 
 from .models import ProductCategory, Discount, Product
 from .serializers import ProductCategorySerializer, DiscountSerializer, ProductSerializer
@@ -19,6 +22,8 @@ class ProductCategoryView(APIView):
     @swagger_auto_schema(
         operation_description="Returns a list of the latest 10 product categories"
     )
+    @method_decorator(vary_on_headers("Authorization"))
+    @method_decorator(cache_page(60 * 60))
     def get(self, format=None, *args, **kwargs):
         product_categories = ProductCategory.objects.all()[:10]
         product_categories_serializer = ProductCategorySerializer(product_categories, many=True)
@@ -62,6 +67,8 @@ class DiscountView(APIView):
     @swagger_auto_schema(
         operation_description="Returns a list of the latest 10 discounts"
     )
+    @method_decorator(vary_on_headers("Authorization"))
+    @method_decorator(cache_page(60 * 60))
     def get(self, format=None, *args, **kwargs):
         discounts = Discount.objects.all()[:10]
         discounts_serializer = ProductCategorySerializer(discounts, many=True)
@@ -105,6 +112,8 @@ class ProductView(APIView):
     @swagger_auto_schema(
         operation_description="Returns a list of the latest 10 products"
     )
+    @method_decorator(vary_on_headers("Authorization"))
+    @method_decorator(cache_page(60 * 60))
     def get(self, format=None, *args, **kwargs):
         products = Product.objects.all()[:10]
         products_serializer = ProductSerializer(products, many=True)
@@ -137,4 +146,3 @@ class ProductDetailView(RetrieveUpdateDestroyAPIView):
     permission_classes = [IsAuthenticated]
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
-    

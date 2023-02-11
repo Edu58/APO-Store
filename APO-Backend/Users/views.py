@@ -1,7 +1,10 @@
+from django.views.decorators.vary import vary_on_headers
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework.generics import RetrieveUpdateDestroyAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView, status, Response
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_page
 
 from .models import Account, CustomerAddress, CustomerPayment, Profile
 from .serializers import AccountSerializer, CustomerAddressSerializer, CustomerPaymentSerializer, ProfileSerializer
@@ -20,6 +23,8 @@ class AccountRegistrationView(APIView):
         },
         operation_description='Returns a list of the first 10 Accounts'
     )
+    @method_decorator(vary_on_headers("Authorization"))
+    @method_decorator(cache_page(60 * 60))
     def get(self, format=None, *args, **kwargs):
         accounts = Account.objects.all()[:10]
         account_serializer = AccountSerializer(accounts, many=True)
@@ -63,6 +68,8 @@ class CustomerAddressView(APIView):
     @swagger_auto_schema(
         operation_description="Returns a list of the first 10 Customer Addresses"
     )
+    @method_decorator(vary_on_headers("Authorization"))
+    @method_decorator(cache_page(60 * 60))
     def get(self, format=None, *args, **kwargs):
         customer_addresses = CustomerAddress.objects.all()[:10]
         customer_addresses_serializer = CustomerAddressSerializer(customer_addresses, many=True)
