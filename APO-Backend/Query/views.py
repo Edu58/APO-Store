@@ -6,6 +6,7 @@ from rest_framework import status
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework.permissions import AllowAny
 
 from Catalogue.models import Product
 from Catalogue.serializers import ProductSerializer
@@ -16,6 +17,8 @@ class QueryProducts(APIView, PageNumberPagination):
     """
     Performs a Full-Text search for products based on their descriptions and names.
     """
+
+    permission_classes = [AllowAny]
 
     @swagger_auto_schema(
         operation_description="Returns a list of product names with the query parameter passed"

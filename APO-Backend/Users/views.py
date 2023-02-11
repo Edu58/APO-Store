@@ -18,6 +18,8 @@ class AccountRegistrationView(APIView, PageNumberPagination):
     2. Get the first 10 Accounts
     """
 
+    permission_classes = [IsAuthenticated]
+
     @swagger_auto_schema(
         responses={
             200: AccountSerializer(many=True)
@@ -68,6 +70,8 @@ class CustomerAddressView(APIView, PageNumberPagination):
     2. Get a list of the first 10 Customer Addresses
     """
 
+    permission_classes = [IsAuthenticated]
+
     @swagger_auto_schema(
         operation_description="Returns a list of the first 10 Customer Addresses"
     )
@@ -115,6 +119,8 @@ class CustomerPaymentView(APIView, PageNumberPagination):
     1. Creates a Customer Payment
     2. Get a list of the first 10 Customer Payments objects
     """
+
+    permission_classes = [IsAuthenticated]
 
     @swagger_auto_schema(
         operation_description="Returns a list of the first 10 Customer Payments"

@@ -3,7 +3,7 @@ from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.generics import RetrieveUpdateDestroyAPIView
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny, IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from django.utils.decorators import method_decorator
@@ -19,6 +19,8 @@ class ProductCategoryView(APIView, PageNumberPagination):
     1. Creates a Product Category
     2. Returns a list of 10 latest Product Categories
     """
+
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
     @swagger_auto_schema(
         operation_description="Returns a list of the latest 10 product categories"
@@ -55,7 +57,7 @@ class ProductCategoryView(APIView, PageNumberPagination):
 
 
 class ProductCategoryDetailView(RetrieveUpdateDestroyAPIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticatedOrReadOnly]
     queryset = ProductCategory.objects.all()
     serializer_class = ProductCategorySerializer
 
@@ -65,6 +67,8 @@ class DiscountView(APIView, PageNumberPagination):
     1. Creates a Discount
     2. Returns a list of 10 latest Discounts
     """
+
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
     @swagger_auto_schema(
         operation_description="Returns a list of the latest 10 discounts"
@@ -102,7 +106,7 @@ class DiscountView(APIView, PageNumberPagination):
 
 
 class DiscountDetailView(RetrieveUpdateDestroyAPIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticatedOrReadOnly]
     queryset = Discount.objects.all()
     serializer_class = DiscountSerializer
 
@@ -112,6 +116,8 @@ class ProductView(APIView, PageNumberPagination):
     1. Creates a Product
     2. Returns a list of 10 latest Products
     """
+
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
     @swagger_auto_schema(
         operation_description="Returns a list of the latest 10 products"

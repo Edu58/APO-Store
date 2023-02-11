@@ -5,7 +5,7 @@ from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.generics import RetrieveUpdateDestroyAPIView
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -18,6 +18,8 @@ class ProductsReviewView(APIView, PageNumberPagination):
     1. Creates a Product Review
     2. Returns a list of 10 latest Product Reviews
     """
+
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
     @swagger_auto_schema(
         operation_description="Returns a list of the latest 10 Product Reviews"
@@ -55,6 +57,6 @@ class ProductsReviewView(APIView, PageNumberPagination):
 
 
 class ProductReviewDetailView(RetrieveUpdateDestroyAPIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticatedOrReadOnly]
     queryset = ProductReview.objects.all()
     serializer_class = ProductReviewSerializer

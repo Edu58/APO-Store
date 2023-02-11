@@ -17,6 +17,8 @@ class PaymentDetailsView(APIView, PageNumberPagination):
     2. Returns a list of 10 latest Payment Objects
     """
 
+    permission_classes = [IsAuthenticated]
+
     @swagger_auto_schema(
         operation_description="Returns a list of the latest 10 Payment Details"
     )

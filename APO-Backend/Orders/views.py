@@ -17,6 +17,8 @@ class ShoppingSessionView(APIView, PageNumberPagination):
     2. Returns a list of 10 latest Shopping Sessions
     """
 
+    permission_classes = [IsAuthenticated]
+
     @swagger_auto_schema(
         operation_description="Returns a list of the latest 10 shopping sessions"
     )
@@ -62,6 +64,8 @@ class CartView(APIView, PageNumberPagination):
     2. Returns a list of 10 latest Carts
     """
 
+    permission_classes = [IsAuthenticated]
+
     @swagger_auto_schema(
         operation_description="Returns a list of the latest 10 Carts"
     )
@@ -106,6 +110,8 @@ class OrderView(APIView, PageNumberPagination):
     1. Creates an Order
     2. Returns a list of 10 latest Order
     """
+
+    permission_classes = [IsAuthenticated]
 
     @swagger_auto_schema(
         operation_description="Returns a list of the latest 10 Orders"
