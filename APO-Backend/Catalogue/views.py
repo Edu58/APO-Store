@@ -1,6 +1,7 @@
 from django.views.decorators.vary import vary_on_headers
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status
+from rest_framework.pagination import PageNumberPagination
 from rest_framework.generics import RetrieveUpdateDestroyAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -13,7 +14,7 @@ from .serializers import ProductCategorySerializer, DiscountSerializer, ProductS
 
 
 # Create your views here.
-class ProductCategoryView(APIView):
+class ProductCategoryView(APIView, PageNumberPagination):
     """
     1. Creates a Product Category
     2. Returns a list of 10 latest Product Categories
@@ -24,9 +25,10 @@ class ProductCategoryView(APIView):
     )
     @method_decorator(vary_on_headers("Authorization"))
     @method_decorator(cache_page(60 * 60))
-    def get(self, format=None, *args, **kwargs):
-        product_categories = ProductCategory.objects.all()[:10]
-        product_categories_serializer = ProductCategorySerializer(product_categories, many=True)
+    def get(self, request, format=None, *args, **kwargs):
+        product_categories = ProductCategory.objects.all()
+        paginated_categories = self.paginate_queryset(product_categories, request, view=self)
+        product_categories_serializer = ProductCategorySerializer(paginated_categories, many=True)
         return Response(
             data=product_categories_serializer.data,
             status=status.HTTP_200_OK
@@ -58,7 +60,7 @@ class ProductCategoryDetailView(RetrieveUpdateDestroyAPIView):
     serializer_class = ProductCategorySerializer
 
 
-class DiscountView(APIView):
+class DiscountView(APIView, PageNumberPagination):
     """
     1. Creates a Discount
     2. Returns a list of 10 latest Discounts
@@ -69,9 +71,11 @@ class DiscountView(APIView):
     )
     @method_decorator(vary_on_headers("Authorization"))
     @method_decorator(cache_page(60 * 60))
-    def get(self, format=None, *args, **kwargs):
-        discounts = Discount.objects.all()[:10]
-        discounts_serializer = ProductCategorySerializer(discounts, many=True)
+    def get(self, request, format=None, *args, **kwargs):
+        discounts = Discount.objects.all()
+
+        paginated_discounts = self.paginate_queryset(discounts, request, self)
+        discounts_serializer = ProductCategorySerializer(paginated_discounts, many=True)
         return Response(
             data=discounts_serializer.data,
             status=status.HTTP_200_OK
@@ -103,7 +107,7 @@ class DiscountDetailView(RetrieveUpdateDestroyAPIView):
     serializer_class = DiscountSerializer
 
 
-class ProductView(APIView):
+class ProductView(APIView, PageNumberPagination):
     """
     1. Creates a Product
     2. Returns a list of 10 latest Products
@@ -114,9 +118,11 @@ class ProductView(APIView):
     )
     @method_decorator(vary_on_headers("Authorization"))
     @method_decorator(cache_page(60 * 60))
-    def get(self, format=None, *args, **kwargs):
-        products = Product.objects.all()[:10]
-        products_serializer = ProductSerializer(products, many=True)
+    def get(self, request, format=None, *args, **kwargs):
+        products = Product.objects.all()
+
+        paginated_products = self.paginate_queryset(products, request, self)
+        products_serializer = ProductSerializer(paginated_products, many=True)
         return Response(
             data=products_serializer.data,
             status=status.HTTP_200_OK

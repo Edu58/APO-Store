@@ -1,5 +1,6 @@
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status
+from rest_framework.pagination import PageNumberPagination
 from rest_framework.generics import RetrieveUpdateDestroyAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -10,7 +11,7 @@ from Checkout.serializers import PaymentDetailsSerializer
 
 
 # Create your views here.
-class PaymentDetailsView(APIView):
+class PaymentDetailsView(APIView, PageNumberPagination):
     """
     1. Creates a Payment Details Object and saves to DB
     2. Returns a list of 10 latest Payment Objects
@@ -19,9 +20,12 @@ class PaymentDetailsView(APIView):
     @swagger_auto_schema(
         operation_description="Returns a list of the latest 10 Payment Details"
     )
-    def get(self, format=None, *args, **kwargs):
-        payment_details = PaymentDetails.objects.all()[:10]
-        payment_details_serializer = PaymentDetailsSerializer(payment_details, many=True)
+    def get(self, request, format=None, *args, **kwargs):
+        payment_details = PaymentDetails.objects.all()
+
+        paginated_payment_details = self.paginate_queryset(payment_details, request, self)
+
+        payment_details_serializer = PaymentDetailsSerializer(paginated_payment_details, many=True)
         return Response(
             data=payment_details_serializer.data,
             status=status.HTTP_200_OK

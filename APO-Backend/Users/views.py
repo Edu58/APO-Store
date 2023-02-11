@@ -1,5 +1,6 @@
 from django.views.decorators.vary import vary_on_headers
 from drf_yasg.utils import swagger_auto_schema
+from rest_framework.pagination import PageNumberPagination
 from rest_framework.generics import RetrieveUpdateDestroyAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView, status, Response
@@ -11,7 +12,7 @@ from .serializers import AccountSerializer, CustomerAddressSerializer, CustomerP
 
 
 # Create your views here.
-class AccountRegistrationView(APIView):
+class AccountRegistrationView(APIView, PageNumberPagination):
     """
     1. Create a new Account
     2. Get the first 10 Accounts
@@ -25,9 +26,11 @@ class AccountRegistrationView(APIView):
     )
     @method_decorator(vary_on_headers("Authorization"))
     @method_decorator(cache_page(60 * 60))
-    def get(self, format=None, *args, **kwargs):
-        accounts = Account.objects.all()[:10]
-        account_serializer = AccountSerializer(accounts, many=True)
+    def get(self, request, format=None, *args, **kwargs):
+        accounts = Account.objects.all()
+
+        paginated_accounts = self.paginate_queryset(accounts, request, view=self)
+        account_serializer = AccountSerializer(paginated_accounts, many=True)
         return Response(
             data=account_serializer.data,
             status=status.HTTP_200_OK
@@ -59,7 +62,7 @@ class AccountDetailView(RetrieveUpdateDestroyAPIView):
     serializer_class = AccountSerializer
 
 
-class CustomerAddressView(APIView):
+class CustomerAddressView(APIView, PageNumberPagination):
     """
     1. Creates a Customer Address
     2. Get a list of the first 10 Customer Addresses
@@ -70,9 +73,11 @@ class CustomerAddressView(APIView):
     )
     @method_decorator(vary_on_headers("Authorization"))
     @method_decorator(cache_page(60 * 60))
-    def get(self, format=None, *args, **kwargs):
-        customer_addresses = CustomerAddress.objects.all()[:10]
-        customer_addresses_serializer = CustomerAddressSerializer(customer_addresses, many=True)
+    def get(self, request, format=None, *args, **kwargs):
+        customer_addresses = CustomerAddress.objects.all()
+
+        paginated_customer_addresses = self.paginate_queryset(customer_addresses, request, view=self)
+        customer_addresses_serializer = CustomerAddressSerializer(paginated_customer_addresses, many=True)
 
         return Response(
             data=customer_addresses_serializer.data,
@@ -105,7 +110,7 @@ class CustomerAddressDetailView(RetrieveUpdateDestroyAPIView):
     serializer_class = CustomerAddressSerializer
 
 
-class CustomerPaymentView(APIView):
+class CustomerPaymentView(APIView, PageNumberPagination):
     """
     1. Creates a Customer Payment
     2. Get a list of the first 10 Customer Payments objects
@@ -114,9 +119,11 @@ class CustomerPaymentView(APIView):
     @swagger_auto_schema(
         operation_description="Returns a list of the first 10 Customer Payments"
     )
-    def get(self, format=None, *args, **kwargs):
-        customer_payments = CustomerPayment.objects.all()[:10]
-        customer_payments_serializer = CustomerPaymentSerializer(customer_payments, many=True)
+    def get(self, request, format=None, *args, **kwargs):
+        customer_payments = CustomerPayment.objects.all()
+
+        paginated_customer_payments = self.paginate_queryset(customer_payments, request, view=self)
+        customer_payments_serializer = CustomerPaymentSerializer(paginated_customer_payments, many=True)
         return Response(
             data=customer_payments_serializer.data,
             status=status.HTTP_200_OK

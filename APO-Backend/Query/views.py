@@ -3,6 +3,7 @@ from django.views.decorators.cache import cache_page
 from django.views.decorators.vary import vary_on_headers
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status
+from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -11,7 +12,7 @@ from Catalogue.serializers import ProductSerializer
 
 
 # Create your views here.
-class QueryProducts(APIView):
+class QueryProducts(APIView, PageNumberPagination):
     """
     Performs a Full-Text search for products based on their descriptions and names.
     """
@@ -27,7 +28,9 @@ class QueryProducts(APIView):
             name__icontains=f'{query_param}'
         ).values_list('id', 'name', 'size', 'price', 'discount')
 
-        results_serializer = ProductSerializer(products, many=True)
+        paginated_products = self.paginate_queryset(products, request, view=self)
+
+        results_serializer = ProductSerializer(paginated_products, many=True)
 
         data = {
             "count": len(results_serializer.data),

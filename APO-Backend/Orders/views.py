@@ -1,5 +1,6 @@
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status
+from rest_framework.pagination import PageNumberPagination
 from rest_framework.generics import RetrieveUpdateDestroyAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -10,7 +11,7 @@ from .serializers import ShoppingSessionSerializer, CartSerializer, OrderSeriali
 
 
 # Create your views here.
-class ShoppingSessionView(APIView):
+class ShoppingSessionView(APIView, PageNumberPagination):
     """
     1. Creates a Shopping Session
     2. Returns a list of 10 latest Shopping Sessions
@@ -19,9 +20,11 @@ class ShoppingSessionView(APIView):
     @swagger_auto_schema(
         operation_description="Returns a list of the latest 10 shopping sessions"
     )
-    def get(self, format=None, *args, **kwargs):
-        shopping_session = ShoppingSession.objects.all()[:10]
-        shopping_session_serializer = ShoppingSessionSerializer(shopping_session, many=True)
+    def get(self, request, format=None, *args, **kwargs):
+        shopping_session = ShoppingSession.objects.all()
+
+        paginated_shopping_session = self.paginate_queryset(shopping_session, request, self)
+        shopping_session_serializer = ShoppingSessionSerializer(paginated_shopping_session, many=True)
         return Response(
             data=shopping_session_serializer.data,
             status=status.HTTP_200_OK
@@ -53,7 +56,7 @@ class ShoppingSessionDetailView(RetrieveUpdateDestroyAPIView):
     serializer_class = ShoppingSessionSerializer
 
 
-class CartView(APIView):
+class CartView(APIView, PageNumberPagination):
     """
     1. Creates a Cart
     2. Returns a list of 10 latest Carts
@@ -62,9 +65,11 @@ class CartView(APIView):
     @swagger_auto_schema(
         operation_description="Returns a list of the latest 10 Carts"
     )
-    def get(self, format=None, *args, **kwargs):
-        cart = Cart.objects.all()[:10]
-        cart_serializer = ShoppingSessionSerializer(cart, many=True)
+    def get(self, request, format=None, *args, **kwargs):
+        cart = Cart.objects.all()
+
+        paginated_cart = self.paginate_queryset(cart, request, self)
+        cart_serializer = ShoppingSessionSerializer(paginated_cart, many=True)
         return Response(
             data=cart_serializer.data,
             status=status.HTTP_200_OK
@@ -96,7 +101,7 @@ class CartDetailView(RetrieveUpdateDestroyAPIView):
     serializer_class = CartSerializer
 
 
-class OrderView(APIView):
+class OrderView(APIView, PageNumberPagination):
     """
     1. Creates an Order
     2. Returns a list of 10 latest Order
@@ -105,9 +110,11 @@ class OrderView(APIView):
     @swagger_auto_schema(
         operation_description="Returns a list of the latest 10 Orders"
     )
-    def get(self, format=None, *args, **kwargs):
-        order = Order.objects.all()[:10]
-        order_serializer = ShoppingSessionSerializer(order, many=True)
+    def get(self, request, format=None, *args, **kwargs):
+        order = Order.objects.all()
+
+        paginated_orders = self.paginate_queryset(order, request, self)
+        order_serializer = ShoppingSessionSerializer(paginated_orders, many=True)
         return Response(
             data=order_serializer.data,
             status=status.HTTP_200_OK
