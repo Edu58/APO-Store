@@ -26,21 +26,32 @@ class QueryProducts(APIView, PageNumberPagination):
     @method_decorator(vary_on_cookie)
     @method_decorator(cache_page(60 * 5))
     def get(self, request, format=None, *args, **kwargs):
-        query_param = request.query_params.get('product_name', None)
+        query_param = request.query_params.get('product_name', '')
         products = Product.objects.filter(
-            name__icontains=f'{query_param}'
-        ).values_list('id', 'name', 'size', 'price', 'discount')
+            name__icontains=query_param
+        ).values('id', 'name', 'size', 'price', 'discount')
 
-        paginated_products = self.paginate_queryset(products, request, view=self)
+        try:
+            paginated_products = self.paginate_queryset(products, request, view=self)
 
-        results_serializer = ProductSerializer(paginated_products, many=True)
+            results_serializer = ProductSerializer(paginated_products, many=True)
 
-        data = {
-            "count": len(results_serializer.data),
-            "results": results_serializer.data
-        }
+            data = {
+                "count": len(results_serializer.data),
+                "results": results_serializer.data
+            }
 
-        return Response(
-            data=data,
-            status=status.HTTP_200_OK
-        )
+            return Response(
+                data=data,
+                status=status.HTTP_200_OK
+            )
+        except KeyError:
+            data = {
+                "count": 0,
+                "results": []
+            }
+
+            return Response(
+                data=data,
+                status=status.HTTP_200_OK
+            )
