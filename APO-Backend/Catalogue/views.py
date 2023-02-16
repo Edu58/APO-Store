@@ -26,7 +26,7 @@ class ProductCategoryView(APIView, PageNumberPagination):
         operation_description="Returns a list of the latest 10 product categories"
     )
     @method_decorator(vary_on_cookie)
-    @method_decorator(cache_page(60 * 60))
+    @method_decorator(cache_page(60 * 5))
     def get(self, request, format=None, *args, **kwargs):
         product_categories = ProductCategory.objects.all()
         paginated_categories = self.paginate_queryset(product_categories, request, view=self)
@@ -74,7 +74,7 @@ class DiscountView(APIView, PageNumberPagination):
         operation_description="Returns a list of the latest 10 discounts"
     )
     @method_decorator(vary_on_cookie)
-    @method_decorator(cache_page(60 * 60))
+    @method_decorator(cache_page(60 * 5))
     def get(self, request, format=None, *args, **kwargs):
         discounts = Discount.objects.all()
 
@@ -123,7 +123,7 @@ class ProductView(APIView, PageNumberPagination):
         operation_description="Returns a list of the latest 10 products"
     )
     @method_decorator(vary_on_cookie)
-    @method_decorator(cache_page(60 * 60))
+    @method_decorator(cache_page(60 * 5))
     def get(self, request, format=None, *args, **kwargs):
         products = Product.objects.all()
 

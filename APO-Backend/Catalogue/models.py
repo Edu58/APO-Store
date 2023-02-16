@@ -40,7 +40,7 @@ class Product(models.Model):
     SKU = models.CharField(max_length=250, null=False, blank=False, unique=True, db_index=True)
     price = models.CharField(max_length=250, default=0)
     quantity = models.IntegerField(default=0)
-    discount = models.ForeignKey(Discount, on_delete=models.CASCADE)
+    discount = models.ForeignKey(Discount, on_delete=models.CASCADE, null=True, blank=True)
     updated_at = models.DateTimeField(auto_now=True)
     created_at = models.DateTimeField(auto_now_add=True)
 

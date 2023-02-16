@@ -6,8 +6,15 @@ from Catalogue.models import Product
 
 # Create your models here.
 class ShoppingSession(models.Model):
+    """
+    Shows amount of time a customer spends on your site before exiting
+
+    Formula: (Length of time of customer session A + Time of session B + Time of session C +...+ Time of session
+    N)/Total shopping sessions
+    """
     account = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
     total = models.CharField(max_length=10, default=0)
+    order_placed = models.BooleanField(default=False)
     updated_at = models.DateTimeField(auto_now=True)
     created_at = models.DateTimeField(auto_now_add=True)
 

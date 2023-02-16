@@ -30,7 +30,7 @@ class AccountRegistrationView(APIView, PageNumberPagination):
         operation_description='Returns a list of the first 10 Accounts'
     )
     @method_decorator(vary_on_headers("Authorization"))
-    @method_decorator(cache_page(60 * 60))
+    @method_decorator(cache_page(60 * 5))
     def get(self, request, format=None, *args, **kwargs):
         accounts = Account.objects.all()
 
@@ -82,7 +82,7 @@ class CustomerAddressView(APIView, PageNumberPagination):
         operation_description="Returns a list of the first 10 Customer Addresses"
     )
     @method_decorator(vary_on_headers("Authorization"))
-    @method_decorator(cache_page(60 * 60))
+    @method_decorator(cache_page(60 * 5))
     def get(self, request, format=None, *args, **kwargs):
         customer_addresses = CustomerAddress.objects.all()
 

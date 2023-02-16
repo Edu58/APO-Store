@@ -1,3 +1,5 @@
+import json
+
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status
 from rest_framework.pagination import PageNumberPagination
@@ -8,6 +10,7 @@ from rest_framework.views import APIView
 
 from .models import ShoppingSession, Cart, Order
 from .serializers import ShoppingSessionSerializer, CartSerializer, OrderSerializer
+from .tasks import save_order
 
 
 # Create your views here.
@@ -134,7 +137,7 @@ class OrderView(APIView, PageNumberPagination):
         order_serializer = OrderSerializer(data=request.data)
 
         if order_serializer.is_valid():
-            order_serializer.save()
+            save_order.delay(request.data)
             return Response(
                 data=order_serializer.data,
                 status=status.HTTP_201_CREATED

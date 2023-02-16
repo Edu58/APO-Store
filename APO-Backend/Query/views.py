@@ -24,7 +24,7 @@ class QueryProducts(APIView, PageNumberPagination):
         operation_description="Returns a list of product names with the query parameter passed"
     )
     @method_decorator(vary_on_cookie)
-    @method_decorator(cache_page(60 * 60))
+    @method_decorator(cache_page(60 * 5))
     def get(self, request, format=None, *args, **kwargs):
         query_param = request.query_params.get('product_name', None)
         products = Product.objects.filter(
