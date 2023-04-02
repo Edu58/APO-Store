@@ -57,6 +57,11 @@ class ProductsReviewView(APIView, PageNumberPagination):
 
 
 class ProductReviewDetailView(RetrieveUpdateDestroyAPIView):
+    """Retreive, Update or Delete a product review
+
+    Args:
+        PK (int): Product ID or Primary Key
+    """
     permission_classes = [IsAuthenticatedOrReadOnly]
     queryset = ProductReview.objects.all()
     serializer_class = ProductReviewSerializer
