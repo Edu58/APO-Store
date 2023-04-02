@@ -56,6 +56,11 @@ class ShoppingSessionView(APIView, PageNumberPagination):
 
 
 class ShoppingSessionDetailView(RetrieveUpdateDestroyAPIView):
+    """Gets a shopping session
+
+    Args:
+        PK (int): A shopping session primary key or ID
+    """
     permission_classes = [IsAuthenticated]
     queryset = ShoppingSession.objects.all()
     serializer_class = ShoppingSessionSerializer
@@ -103,6 +108,11 @@ class CartView(APIView, PageNumberPagination):
 
 
 class CartDetailView(RetrieveUpdateDestroyAPIView):
+    """Get cart details, update or delete i.e. products in cart
+
+    Args:
+        PK (int): Cart Primary Key or ID
+    """
     permission_classes = [IsAuthenticated]
     queryset = Cart.objects.all()
     serializer_class = CartSerializer
@@ -137,6 +147,9 @@ class OrderView(APIView, PageNumberPagination):
         order_serializer = OrderSerializer(data=request.data)
 
         if order_serializer.is_valid():
+            """
+            Save the order in the background with Celery
+            """
             save_order.delay(request.data)
             return Response(
                 data=order_serializer.data,
@@ -150,6 +163,11 @@ class OrderView(APIView, PageNumberPagination):
 
 
 class OrderDetailView(RetrieveUpdateDestroyAPIView):
+    """Get Order Details, Update or Delete
+
+    Args:
+        PK (int): An Order Primary Key or ID
+    """
     permission_classes = [IsAuthenticated]
     queryset = Order.objects.all()
     serializer_class = OrderSerializer
