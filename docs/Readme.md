@@ -113,8 +113,9 @@ python3 manage.py test
 
 ## Contributing
 
-Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on our code
-of conduct, and the process for submitting pull requests to us.
+Contributions are very much welcome. Feel free to clone this repository and make changes that you think would benefit anyone using this project. After this create a pull request, it will be reviewed and accepted if it is deemed worthy.
+
+Contributions to create a working front end are also welcome.
 
 ## Authors
 
